@@ -43,3 +43,5 @@ https://creativecommons.org/licenses/by-nc/4.0/
 or see the legal code:
 
 https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+.env

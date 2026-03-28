@@ -82,3 +82,5 @@ artifacts/
 # Rider (JetBrains IDE for .NET)
 .idea/
 *.sln.iml
+# Python
+*venv/
