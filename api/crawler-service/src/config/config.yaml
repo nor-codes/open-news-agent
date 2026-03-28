@@ -1,0 +1,15 @@
+crawler:
+  interval: 10
+  s3:
+    bucket: open-news-agent-content
+  sqs:
+    queueArn: https://sqs.us-east-1.amazonaws.com/${ACCOUNT_ID}/open-news-agent-dev-queue
+  sources:
+    nyt:
+     name: New York Times
+     baseUrl: https://rss.nytimes.com/services/xml/rss/nyt
+     rssFeed:
+      - World
+      - Economy
+
+      
