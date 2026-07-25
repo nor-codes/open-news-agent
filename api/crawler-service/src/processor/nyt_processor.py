@@ -3,22 +3,26 @@ import logging
 from datetime import date, datetime
 from util.s3_util import S3Util
 import uuid
-
+import asyncio
 from util.sqs_util import SqsUtil
+from models import Config
 
 
 class NewYorkTimesProcessor:
 
-    def process(self, config):
-        source = config["crawler"]["sources"]["nyt"]
+    def __init__(self,config: Config):
+        self.config = config
+
+    async def process(self, config):
+        source = self.config.crawler.sources['nyt']
         now = datetime.now()
 
         # Bucket folder by date (YYYY_MM_DD)
-        bucket = f"{config['crawler']['s3']['bucket']}/{now.strftime('%Y_%m_%d')}"
+        bucket = f"{self.config.crawler.s3_bucket}/{now.strftime('%Y_%m_%d')}"
 
-        base_url = source['baseUrl']
+        base_url = source.base_url
 
-        for feed in source['rssFeed']:
+        for feed in source.rss_feed:
             url = f"{base_url}/{feed}.xml"
             logging.info(f"Fetch -> New York Times Feed - {url}")
 

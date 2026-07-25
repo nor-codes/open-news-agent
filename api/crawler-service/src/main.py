@@ -1,22 +1,26 @@
+import asyncio
+
 from processor.nyt_processor import NewYorkTimesProcessor
 from util.config_loader import ConfigLoader
-from dotenv import load_dotenv
-import time
-import os
+import logging
 from datetime import datetime
+from models import Config
 
-load_dotenv()
-config = ConfigLoader.load_configuration()
+async def run_job(processor: NewYorkTimesProcessor, config: Config):
+    logging.info(f"Running job at {datetime.now()}")
+    await processor.process(config)
 
-INTERVAL = int(os.getenv("CRAWLER_INTERVAL", 3600))  # seconds
+async def main():
+    config = ConfigLoader.load_config()
+    processor = NewYorkTimesProcessor(config=config)
 
-processor = NewYorkTimesProcessor()
+    while True:
+        try:
+            await run_job(processor, config)
+        except Exception as e:
+            logging.error(e)
 
-while True:
-    try:
-        print(f"Running job at {datetime.now()}")
-        processor.process(config)
-    except Exception as e:
-        print(f"Error: {e}")
+        await asyncio.sleep(config.crawler.interval)
 
-    time.sleep(INTERVAL)
+if __name__ == "__main__":
+    asyncio.run(main())

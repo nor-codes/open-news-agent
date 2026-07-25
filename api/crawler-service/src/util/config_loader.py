@@ -1,6 +1,7 @@
 import yaml
 from pathlib import Path
 from typing import Dict,Any
+from models import Config
 import re
 import os
 
@@ -11,17 +12,20 @@ def resolve_envs(config):
 
 class ConfigLoader:
 
-    CONFIG_FILE_PATH = Path("config/config.yaml")
+    CONFIG_FILE_PATH = Path("config.yaml")
     pattern = re.compile(r"\$\{([^}^{]+)\}")
 
     @staticmethod
-    def load_configuration() -> Dict[str,Any]:
+    def load_config() -> Config:
         
         if not ConfigLoader.CONFIG_FILE_PATH.exists():
             raise FileNotFoundError(f"Config file not found: {ConfigLoader.CONFIG_FILE_PATH}")
 
-        with open(ConfigLoader.CONFIG_FILE_PATH, "r") as file:
-            config = yaml.safe_load(file)
+        with open(ConfigLoader.CONFIG_FILE_PATH) as file:
+            raw_config = file.read()
 
-        return resolve_envs(config)
+        resolved_config = os.path.expandvars(raw_config)
+        yaml_config = yaml.safe_load(resolved_config)
+
+        return Config(**yaml_config)
 
